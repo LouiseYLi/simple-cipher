@@ -33,21 +33,21 @@ fn main() -> Result<()> {
     // let shift_value = &args[2];
     // let socket_path = &args[3];
 
-    let buffer: String = format!(
-        "{}{}{}{}{}{}",
-        &args[1].len(),
-        &args[1],
-        &args[2].len(),
-        &args[2],
-        &args[3].len(),
-        &args[3]
-    );
+    // let buffer: String = format!(
+    //     "{}{}{}{}{}{}",
+    //     &args[1].len(),
+    //     &args[1],
+    //     &args[2].len(),
+    //     &args[2],
+    //     &args[3].len(),
+    //     &args[3]
+    // );
 
-    println!(
-        "buffer: {}, buffer as bytes: {:?}",
-        buffer,
-        &buffer.as_bytes()
-    );
+    // println!(
+    //     "buffer: {}, buffer as bytes: {:?}",
+    //     buffer,
+    //     &buffer.as_bytes()
+    // );
 
     let mut sock = match UnixStream::connect(&args[3]) {
         Ok(stream) => {
@@ -60,37 +60,29 @@ fn main() -> Result<()> {
         }
     };
 
-    match write_buffer(&mut sock, &args[1]) {
+    match write_request(&mut sock, &args) {
         Ok(()) => {}
         Err(e) => {
             eprintln!("Error: {}", e);
             std::process::exit(1);
         }
     }
-    match write_buffer(&mut sock, &args[2]) {
-        Ok(()) => {}
-        Err(e) => {
-            eprintln!("Error: {}", e);
-            std::process::exit(1);
-        }
-    }
-    match write_buffer(&mut sock, &args[3]) {
-        Ok(()) => {}
-        Err(e) => {
-            eprintln!("Error: {}", e);
-            std::process::exit(1);
-        }
-    }
-    // // Writes length of the message as a 4 byte unsigned integer in BE order
-    // match sock.write_u32::<BigEndian>(buffer.as_bytes().len()) {
+
+    // match write_buffer(&mut sock, &args[1]) {
     //     Ok(()) => {}
     //     Err(e) => {
     //         eprintln!("Error: {}", e);
     //         std::process::exit(1);
     //     }
     // }
-
-    // match sock.write_all(buffer.as_bytes()) {
+    // match write_buffer(&mut sock, &args[2]) {
+    //     Ok(()) => {}
+    //     Err(e) => {
+    //         eprintln!("Error: {}", e);
+    //         std::process::exit(1);
+    //     }
+    // }
+    // match write_buffer(&mut sock, &args[3]) {
     //     Ok(()) => {}
     //     Err(e) => {
     //         eprintln!("Error: {}", e);
@@ -102,12 +94,6 @@ fn main() -> Result<()> {
     // let mut buffer = [0u8; 128];
     // let n = sock.read(&mut buffer)?;
     // println!("Server replied: {}", String::from_utf8_lossy(&buffer[..n]));
-
-    // // TODO: remove this
-    // println!(
-    //     "msg: {}, shift_value: {}, socket_path: {}",
-    //     msg, shift_value, socket_path
-    // );
 
     Ok(())
 }
