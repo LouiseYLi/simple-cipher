@@ -1,2 +1,3 @@
 # Ignore Cargo build artifacts
-/target
+/target/server/target
+/target/client/target
