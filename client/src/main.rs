@@ -1,7 +1,13 @@
 mod args;
+mod cipher;
+mod globals;
 mod io_helper;
 
 use args::*;
+#[allow(unused_imports)]
+use cipher::*;
+#[allow(unused_imports)]
+use globals::*;
 use io_helper::*;
 use std::env::args;
 use std::io::*;
@@ -61,6 +67,14 @@ fn main() -> Result<()> {
     };
 
     match write_request(&mut sock, &args) {
+        Ok(()) => {}
+        Err(e) => {
+            eprintln!("Error: {}", e);
+            std::process::exit(1);
+        }
+    }
+
+    match handle_encryption(&mut sock) {
         Ok(()) => {}
         Err(e) => {
             eprintln!("Error: {}", e);
