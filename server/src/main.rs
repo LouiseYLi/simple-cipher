@@ -1,12 +1,15 @@
+mod args_helper;
 mod cipher;
 mod globals;
 mod io_helper;
 mod math;
+use args_helper::*;
 #[allow(unused_imports)]
 use cipher::*;
 #[allow(unused_imports)]
 use globals::*;
 use io_helper::*;
+use std::env::args;
 use std::fs;
 use std::io;
 use std::os::unix::net::UnixListener;
@@ -15,9 +18,19 @@ use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 
 fn main() -> io::Result<()> {
+    let args: Vec<String> = args().collect();
     let terminate = Arc::new(AtomicBool::new(false));
-    let socket_path = "temp/socket";
     let t_clone = terminate.clone();
+
+    match validate_args(&args) {
+        Ok(()) => {}
+        Err(e) => {
+            eprintln!("Error: {}", e);
+            std::process::exit(1);
+        }
+    }
+
+    let socket_path = &args[1];
 
     ctrlc::set_handler(move || {
         println!("\nSIGINT received! Closing program...");
@@ -42,9 +55,9 @@ fn main() -> io::Result<()> {
     //      will terminate after fulfilling one last client connection
     while !terminate.load(Ordering::SeqCst) {
         let mut sock = match listener.accept() {
-            Ok((socket, addr)) => {
+            Ok((socket, _addr)) => {
                 println!("Accepted client connection");
-                println!("socket: {:?}, addr: {:?}", socket, addr);
+                // println!("socket: {:?}, addr: {:?}", socket, addr);
                 socket
             }
             Err(e) => {
@@ -67,3 +80,31 @@ fn main() -> io::Result<()> {
     fs::remove_file(socket_path)?;
     Ok(())
 }
+
+// fn validate_args(args: &[String]) -> Result<(), String> {
+//     validate_length(args.len() as i32)?;
+//     validate_path(&args[1])?;
+
+//     Ok(())
+// }
+
+// fn validate_length(vector_length: i32) -> Result<(), String> {
+//     const MAX_ARGS: i32 = 2;
+//     if vector_length != MAX_ARGS {
+//         return Err(format!(
+//             "Invalid number of args... Expected 4, actual {}",
+//             vector_length
+//         ));
+//     }
+
+//     Ok(())
+// }
+
+// fn validate_path(path_str: &str) -> Result<(), String> {
+//     let path = Path::new(path_str);
+//     if !(path.exists()) {
+//         return Err(format!("Path {} does not exist", path_str));
+//     }
+
+//     Ok(())
+// }
