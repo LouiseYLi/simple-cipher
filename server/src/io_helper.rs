@@ -9,6 +9,8 @@ pub fn handle_request(sock: &mut UnixStream) -> Result<()> {
     let msg_str: String = convert_to_string(read_token(sock));
     let shift_value_str: String = convert_to_string(read_token(sock));
 
+    println!("Message to encrypt: {}", msg_str);
+
     let msg: &str = &msg_str;
     let shift_value: i32 = shift_value_str
         .parse::<i32>()
@@ -33,10 +35,6 @@ fn read_token(sock: &mut UnixStream) -> Result<Vec<u8>> {
     let mut payload = vec![0u8; payload_len];
 
     sock.read_exact(&mut payload)?;
-
-    // TODO: remove this
-    let text = String::from_utf8_lossy(&payload);
-    println!("{}", text);
 
     Ok(payload)
 }

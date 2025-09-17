@@ -38,10 +38,6 @@ fn main() -> io::Result<()> {
     })
     .expect("Error setting up Ctrl-C handler");
 
-    // let msg: &str = "If he had anything confidential to say, he wrote it in cipher, that is, by so changing the order of the letters of the alphabet, that not a word could be made out.";
-    // println!("{} - {}", UP_MIN_INDEX, UP_MAX_INDEX);
-    // encrypt(msg, -529);
-
     // Remove old socket if exists
     if Path::new(socket_path).exists() {
         fs::remove_file(socket_path)?;
