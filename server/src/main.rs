@@ -34,6 +34,7 @@ fn main() -> io::Result<()> {
     println!("Server is listening on {}", socket_path);
 
     // loop until CTRL+C received
+    //      will terminate after fulfilling one last client connection
     while !terminate.load(Ordering::SeqCst) {
         match listener.accept() {
             Ok((socket, addr)) => {
@@ -46,6 +47,7 @@ fn main() -> io::Result<()> {
         }
     }
 
+    // Removes socket when server is done
     fs::remove_file(socket_path)?;
     Ok(())
 }
